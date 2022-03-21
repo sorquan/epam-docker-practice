@@ -1,0 +1,55 @@
+version: '3.8'
+services:
+  database:
+    image: "postgres:14.2-alpine"
+    container_name: database
+    networks:
+      - backend
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_DB=django
+      - POSTGRES_USER=django
+      - POSTGRES_PASSWORD=django
+
+  backend:
+    build: ./backend
+    container_name: backend
+    networks:
+      - backend
+      - frontend
+    ports:
+      - 8000:8000
+    environment:
+      - DJANGO_DB_NAME=django
+      - DJANGO_SU_NAME=django
+      - DJANGO_SU_PASS=django
+      - DJANGO_DB_HOST=database
+      - DJANGO_DB_PORT=5432
+
+  frontend:
+    build: ./frontend
+    container_name: frontend
+    networks:
+      - frontend
+    ports:
+      - 80:80
+
+volumes:
+  pg_data:
+
+networks:
+  backend:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 192.168.100.0/24
+  frontend:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 192.168.200.0/24
