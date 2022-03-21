@@ -22,6 +22,8 @@ services:
       - frontend
     ports:
       - 8000:8000
+    depends_on:
+      - database
     environment:
       - DJANGO_DB_NAME=django
       - DJANGO_SU_NAME=django
@@ -36,6 +38,8 @@ services:
       - frontend
     ports:
       - 80:80
+    depends_on:
+      - backend
 
 volumes:
   pg_data:
